@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Label, DropdownButton, MenuItem, Form } from 'react-bootstrap'
-import '../App.css';
+
 
 
 const regionDisplay = {
@@ -51,9 +51,9 @@ function toLocaleStringSupportsLocale() {
 
 const Awsregion = ({ region, onSelect }) => (
     <Form inline>
-        <Dropdownbutton bsStyle="default" id='aws-region' onSelect={onSelect} title={region}>
+        {/* <Dropdownbutton bsStyle="default" id='aws-region' onSelect={onSelect} title={region}>
             {Object.keys(regionDisplay).map(region => <MenuItem key={region} eventKey={region}> {region} - {regionDisplay[region][0]} </MenuItem>)}
-        </Dropdownbutton>
+        </Dropdownbutton> */}
     </Form>
 );
 
@@ -154,7 +154,7 @@ class Calculator extends React.Component {
                     <h4> <small> Cost Calculator (All units per month) </small> </h4>
                 </div>
 
-                <AwsRegion region={this.state.region} onSelect={(key, e) => this.handleRegion(key, e)} />
+                {/* <AwsRegion region={this.state.region} onSelect={(key, e) => this.handleRegion(key, e)} /> */}
 
                 <div className="jumbotron col-sm-10 col-sm-offset-1" style={transparentBg} >
 
