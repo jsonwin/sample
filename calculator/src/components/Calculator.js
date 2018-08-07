@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Label, DropdownButton, MenuItem, Form } from 'react-bootstrap'
-
-
+import '../App.css';
 
 const regionDisplay = {
     'US East (N.Virginia)': ['us-east-1', 'pp1'],
@@ -26,9 +25,9 @@ const prices = {
     'pp6': { s3: [31.4, 30.8, 30.3, 29.7, 29.3, 28.7], s3ia: 18.0, put: 4.5, putia: 10, get: 0.35, getia: 1, data: 0.01 },
     'pp7': { s3: [30.0, 29.5, 29.0, 28.5, 28.0, 27.5], s3ia: 19.0, put: 5.0, putia: 10, get: 0.40, getia: 1, data: 0.01 },
     'pp8': { s3: [40.8, 40.1, 39.4, 38.7, 38.0, 37.4], s3ia: 26.0, put: 7.0, putia: 10, get: 0.56, getia: 1, data: 0.01 },
-};
+}
 
-const useLocale = toLocaleStringSupportsLocale();
+const useLocale = toLocaleStringSupportsLocales()
 
 function currencyFormat(total) {
     if (useLocale) {
@@ -39,7 +38,7 @@ function currencyFormat(total) {
     }
 }
 
-function toLocaleStringSupportsLocale() {
+function toLocaleStringSupportsLocales() {
     var number = 0;
     try {
         number.toLocaleString('i');
@@ -47,14 +46,15 @@ function toLocaleStringSupportsLocale() {
         return e.name === 'RangeError';
     }
     return false;
-};
+}
 
-const Awsregion = ({ region, onSelect }) => (
+const AwsRegion = ({ region, onSelect }) => (
     <Form inline>
-        {/* <Dropdownbutton bsStyle="default" id='aws-region' onSelect={onSelect} title={region}>
+        <DropdownButton bsStyle="default" id="aws-region" onSelect={onSelect} title={region}>
             {Object.keys(regionDisplay).map(region => <MenuItem key={region} eventKey={region}> {region} - {regionDisplay[region][0]} </MenuItem>)}
-        </Dropdownbutton> */}
+        </DropdownButton>
     </Form>
+
 );
 
 const ValueRow = ({ label, value, s3s, s3ia, onChange, addon }) => (
@@ -75,26 +75,19 @@ const ValueRow = ({ label, value, s3s, s3ia, onChange, addon }) => (
         <Label bsClass="col-sm-3 text-center">{currencyFormat(s3s)}</Label>
         <Label bsClass="col-sm-3 text-center">{currencyFormat(s3ia)}</Label>
     </div>
-
 );
+
 
 const transparentBg = { background: 'transparent' }
 
-class Calculator extends React.Component {
-    constructor(props) {
-        super(props);
-        this.setState({ postPutRequest: e.target.value });
+class App extends Component {
+
+    constructor() {
+        super()
+        this.state = { region: Object.keys(regionDisplay)[0], dataSize: 100, postPutRequests: 10, getRequests: 100, dataTransferSize: 100 }
     }
 
-    handleDatasize(e) {
-        e.preventDefault();
-        this.setState({ dataSize: e.target.value });
-    }
-
-    handlePostRequest(e) {
-        e.preventDefault();
-        this.setState({ postPutRequests: e.target.value });
-    } handleDataSize(e) {
+    handleDataSize(e) {
         e.preventDefault();
         this.setState({ dataSize: e.target.value });
     }
@@ -106,8 +99,9 @@ class Calculator extends React.Component {
 
     handleGetRequest(e) {
         e.preventDefault();
-        this.setState({ getRequest: e.target.value });
+        this.setState({ getRequests: e.target.value });
     }
+
     handleDataTransferSize(e) {
         e.preventDefault();
         this.setState({ dataTransferSize: e.target.value });
@@ -121,19 +115,22 @@ class Calculator extends React.Component {
         const multiplier = [1, 49, 450, 500, 4000, 5000]
         let totalPrice = multiplier.reduce((prev, cur, idx) => {
             if (dataSize >= 0) {
-                totalPrice = prev + (price[idx] * (cur > dataSize ? dataSize : cur))
+                totalPrice = prev + (prices[idx] * (cur > dataSize ? dataSize : cur))
                 dataSize -= cur
             }
             return totalPrice
         }, 0);
+
+        // If data over 10PB
+        //
         if (dataSize >= 0) {
-            totalPrice += price.slice(-1)[0] * dataSize
+            totalPrice += prices.slice(-1)[0] * dataSize
         }
         return totalPrice
     }
 
-    render() {
 
+    render() {
         const price = prices[regionDisplay[this.state.region][1]]
 
         const storageCost = this.calculateTieredPrice(price.s3, this.state.dataSize)
@@ -154,7 +151,7 @@ class Calculator extends React.Component {
                     <h4> <small> Cost Calculator (All units per month) </small> </h4>
                 </div>
 
-                {/* <AwsRegion region={this.state.region} onSelect={(key, e) => this.handleRegion(key, e)} /> */}
+                <AwsRegion region={this.state.region} onSelect={(key, e) => this.handleRegion(key, e)} />
 
                 <div className="jumbotron col-sm-10 col-sm-offset-1" style={transparentBg} >
 
@@ -215,4 +212,5 @@ class Calculator extends React.Component {
         );
     }
 }
-export default Calculator; 
+
+export default App;
